@@ -1,7 +1,7 @@
 package pg
 
 import (
-	"time"
+	"fmt"
 
 	"github.com/volchok96/todoapp/internal/domain"
 	"go.uber.org/zap"
@@ -67,20 +67,22 @@ func (r *taskRepo) List(offset, limit int, status *bool) ([]*domain.Task, error)
 	return tasks, nil
 }
 
-func (r *taskRepo) ListByDate(date string, status *bool) ([]*domain.Task, error) {
-	var tasks []*domain.Task
-	parsedDate, err := time.Parse("2006-01-02", date)
-	if err != nil {
-		r.logger.Error("Failed to parse date", zap.String("date", date), zap.Error(err))
-		return nil, err
-	}
-	query := r.db.Where("date = ?", parsedDate)
-	if status != nil {
-		query = query.Where("done = ?", *status)
-	}
-	if err := query.Find(&tasks).Error; err != nil {
-		r.logger.Error("Failed to fetch tasks by date", zap.String("date", date), zap.Error(err))
-		return nil, err
-	}
-	return tasks, nil
+func (r *taskRepo) ListByDate(dateStr string, status *bool) ([]*domain.Task, error) {
+    var tasks []*domain.Task
+    
+    query := r.db.Where("date::text = ?", dateStr)
+    
+    if status != nil {
+        query = query.Where("done = ?", *status)
+    }
+    
+    if err := query.Find(&tasks).Error; err != nil {
+        r.logger.Error("Database query failed",
+            zap.String("date", dateStr),
+            zap.Any("status", status),
+            zap.Error(err))
+        return nil, fmt.Errorf("database error: %w", err)
+    }
+    
+    return tasks, nil
 }

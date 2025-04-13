@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	_ "github.com/volchok96/todoapp/docs/swagger" // This imports your docs
-	"github.com/gofiber/swagger" // swagger handler
+	"github.com/gofiber/swagger"
+	_ "github.com/volchok96/todoapp/docs"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/volchok96/todoapp/internal/db/pg"
+	pg "github.com/volchok96/todoapp/internal/db"
 	"github.com/volchok96/todoapp/internal/domain"
 	httpDelivery "github.com/volchok96/todoapp/internal/http"
 	"github.com/volchok96/todoapp/internal/usecase"
@@ -44,10 +44,9 @@ func main() {
 	uc := usecase.NewTaskUsecase(repo)
 
 	app := fiber.New()
-	
-	// Add Swagger route
-	app.Get("/swagger/*", swagger.HandlerDefault) 
-	
+
+	app.Get("/swagger/*", swagger.HandlerDefault)
+
 	httpDelivery.RegisterRoutes(app, uc, logger)
 
 	go func() {

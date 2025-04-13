@@ -1,32 +1,40 @@
 package domain
 
 import (
-	"time"
 	"encoding/json"
+	"time"
 )
+
+// swagger:response swaggerResponse
+type ErrorResponse struct {
+	// in:body
+	Body struct {
+		Error string `json:"error"`
+	}
+}
 
 // Task represents a todo item
 // swagger:model
 type Task struct {
-    // The id of the task
-    // example: 1
-    ID          uint   `json:"id" gorm:"primaryKey"`
-    
-    // The title of the task
-    // example: Buy groceries
-    Title       string `json:"title"`
-    
-    // Detailed description of the task
-    // example: Milk, eggs, bread
-    Description string `json:"description"`
-    
-    // Due date in YYYY-MM-DD format
-    // example: 2023-05-20
-    Date        string `json:"date"`
-    
-    // Completion status
-    // example: false
-    Done        bool   `json:"done"`
+	// The id of the task
+	// example: 1
+	ID uint `json:"id" gorm:"primaryKey"`
+
+	// The title of the task
+	// example: Buy groceries
+	Title string `json:"title"`
+
+	// Detailed description of the task
+	// example: Milk, eggs, bread
+	Description string `json:"description"`
+
+	// Due date in YYYY-MM-DD format
+	// example: 2023-05-20
+	Date string `json:"date" gorm:"type:date"`
+
+	// Completion status
+	// example: false
+	Done bool `json:"done"`
 }
 
 type DateOnly struct {
