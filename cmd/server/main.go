@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,6 +14,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
+	"github.com/joho/godotenv"
 	pg "github.com/volchok96/todoapp/internal/db"
 	"github.com/volchok96/todoapp/internal/domain"
 	httpDelivery "github.com/volchok96/todoapp/internal/http"
@@ -29,10 +31,25 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
+	// Загрузка .env файла
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("Warning: .env file not found")
+	}
+
 	logger, _ := zap.NewProduction()
 	defer logger.Sync()
 
-	dsn := "host=localhost user=postgres password=postgres dbname=todoapp port=5432 sslmode=disable"
+	// Получение переменных окружения с fallback значениями
+	dbHost := getEnv("DB_HOST", "localhost")
+	dbPort := getEnv("DB_PORT", "5432")
+	dbUser := getEnv("DB_USER", "postgres")
+	dbPassword := getEnv("DB_PASSWORD", "postgres")
+	dbName := getEnv("DB_NAME", "todoapp")
+
+	// Формирование DSN строки
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
+		dbHost, dbUser, dbPassword, dbName, dbPort)
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		logger.Fatal("failed to connect database", zap.Error(err))
@@ -44,13 +61,11 @@ func main() {
 	uc := usecase.NewTaskUsecase(repo)
 
 	app := fiber.New()
-
 	app.Get("/swagger/*", swagger.HandlerDefault)
-
 	httpDelivery.RegisterRoutes(app, uc, logger)
 
 	go func() {
-		logger.Info("Starting server on :8080")
+		logger.Info("Starting server", zap.String("port", "8080"))
 		if err := app.Listen(":8080"); err != nil {
 			logger.Fatal("Server error", zap.Error(err))
 		}
@@ -61,12 +76,17 @@ func main() {
 	<-quit
 
 	logger.Info("Shutting down server...")
-
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := app.ShutdownWithContext(ctx); err != nil {
 		logger.Fatal("Server forced to shutdown", zap.Error(err))
 	}
-
 	logger.Info("Server exiting")
+}
+
+func getEnv(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return fallback
 }
