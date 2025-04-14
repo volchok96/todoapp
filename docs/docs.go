@@ -9,12 +9,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
         "contact": {},
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -56,14 +51,14 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/domain.Task"
+                                "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.Task"
                             }
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -87,7 +82,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Task"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.Task"
                         }
                     }
                 ],
@@ -95,19 +90,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.Task"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.Task"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -144,20 +139,20 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/domain.Task"
+                                "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.Task"
                             }
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -186,13 +181,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Task"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.Task"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -223,7 +218,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Task"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.Task"
                         }
                     }
                 ],
@@ -231,19 +226,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/domain.Task"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.Task"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -270,7 +265,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
+                            "$ref": "#/definitions/github_com_volchok96_todoapp_internal_domain.ErrorResponse"
                         }
                     }
                 }
@@ -278,7 +273,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.ErrorResponse": {
+        "github_com_volchok96_todoapp_internal_domain.ErrorResponse": {
             "type": "object",
             "properties": {
                 "body": {
@@ -292,7 +287,7 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.Task": {
+        "github_com_volchok96_todoapp_internal_domain.Task": {
             "type": "object",
             "properties": {
                 "date": {
@@ -322,12 +317,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "localhost:8080",
-	BasePath:         "/",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "TodoApp API",
-	Description:      "This is a simple todo application",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

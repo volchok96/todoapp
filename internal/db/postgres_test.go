@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/volchok96/todoapp/internal/db"
+	pg "github.com/volchok96/todoapp/internal/db"
 	"github.com/volchok96/todoapp/internal/domain"
 	"go.uber.org/zap"
 	"gorm.io/driver/sqlite"
@@ -86,8 +86,8 @@ func TestTaskRepo_Delete_NonExistent(t *testing.T) {
 func TestTaskRepo_List(t *testing.T) {
 	repo := newRepo(t)
 
-	repo.Create(&domain.Task{Title: "A", Date: "2025-04-14"})
-	repo.Create(&domain.Task{Title: "B", Date: "2025-04-14", Done: true})
+	require.NoError(t, repo.Create(&domain.Task{Title: "A", Date: "2025-04-14"}))
+	require.NoError(t, repo.Create(&domain.Task{Title: "B", Date: "2025-04-14", Done: true}))
 
 	tasks, err := repo.List(0, 10, nil)
 	require.NoError(t, err)
@@ -107,9 +107,9 @@ func TestTaskRepo_List(t *testing.T) {
 func TestTaskRepo_ListByDate(t *testing.T) {
 	repo := newRepo(t)
 
-	repo.Create(&domain.Task{Title: "A", Date: "2025-04-14"})
-	repo.Create(&domain.Task{Title: "B", Date: "2025-04-14", Done: true})
-	repo.Create(&domain.Task{Title: "C", Date: "2025-04-15"})
+	require.NoError(t, repo.Create(&domain.Task{Title: "A", Date: "2025-04-14"}))
+	require.NoError(t, repo.Create(&domain.Task{Title: "B", Date: "2025-04-14", Done: true}))
+	require.NoError(t, repo.Create(&domain.Task{Title: "C", Date: "2025-04-15"}))
 
 	tasks, err := repo.ListByDate("2025-04-14", nil)
 	require.NoError(t, err)
@@ -125,7 +125,6 @@ func TestTaskRepo_ListByDate(t *testing.T) {
 func TestTaskRepo_ListByDate_InvalidFormat(t *testing.T) {
 	repo := newRepo(t)
 
-	// intentionally wrong format, should return 0 results but no DB error
 	tasks, err := repo.ListByDate("not-a-date", nil)
 	assert.NoError(t, err)
 	assert.Len(t, tasks, 0)
