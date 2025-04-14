@@ -31,9 +31,13 @@ import (
 // @host localhost:8080
 // @BasePath /
 func main() {
-	// Загрузка .env файла
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Warning: .env file not found")
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "local" || appEnv == "" {
+		fmt.Println("Running in LOCAL mode")
+		_ = godotenv.Load(".env.local")
+	} else {
+		fmt.Println("Running in DOCKER/DEFAULT mode")
+		_ = godotenv.Load(".env")
 	}
 
 	logger, _ := zap.NewProduction()
