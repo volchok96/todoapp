@@ -22,14 +22,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// @title TodoApp API
-// @version 1.0
-// @description This is a simple todo application
-// @termsOfService http://swagger.io/terms/
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host localhost:8080
-// @BasePath /
 func main() {
 	appEnv := os.Getenv("APP_ENV")
 	if appEnv == "local" || appEnv == "" {
@@ -41,16 +33,18 @@ func main() {
 	}
 
 	logger, _ := zap.NewProduction()
-	defer logger.Sync()
+	defer func() {
+		if err := logger.Sync(); err != nil && err.Error() != "sync /dev/stderr: invalid argument" {
+			fmt.Fprintf(os.Stderr, "Logger sync failed: %v\n", err)
+		}
+	}()
 
-	// Получение переменных окружения с fallback значениями
 	dbHost := getEnv("DB_HOST", "localhost")
 	dbPort := getEnv("DB_PORT", "5432")
 	dbUser := getEnv("DB_USER", "postgres")
 	dbPassword := getEnv("DB_PASSWORD", "postgres")
 	dbName := getEnv("DB_NAME", "todoapp")
 
-	// Формирование DSN строки
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		dbHost, dbUser, dbPassword, dbName, dbPort)
 
@@ -59,7 +53,9 @@ func main() {
 		logger.Fatal("failed to connect database", zap.Error(err))
 	}
 
-	db.AutoMigrate(&domain.Task{})
+	if err := db.AutoMigrate(&domain.Task{}); err != nil {
+		logger.Fatal("AutoMigrate failed", zap.Error(err))
+	}
 
 	repo := pg.NewTaskRepo(db, logger)
 	uc := usecase.NewTaskUsecase(repo)
